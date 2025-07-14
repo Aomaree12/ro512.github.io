@@ -1,0 +1,402 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบตรวจเช็คระบบน้ำ RO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
+    <style type="text/css">
+        body { font-family: Kanit, sans-serif; background-color: #5F9EA0; }
+        label { color: white; }
+        .container { max-width: 700px; }
+        .three-d-btn {
+            background: linear-gradient(145deg, #ffe259, #ffa751);
+            color: #333; font-weight: bold; border: none; border-radius: 2rem;
+            box-shadow: 0 6px 24px 0 rgba(255,174,0,0.25), 0 1.5px 4px 0 rgba(0,0,0,0.12);
+            transition: all 0.2s ease; padding: 14px 0;
+        }
+        .three-d-btn:active {
+            box-shadow: 0 2px 8px 0 rgba(255,174,0,0.18), 0 1px 2px 0 rgba(0,0,0,0.10);
+            transform: translateY(2px);
+        }
+        .profile-img {
+            width: 70px; height: 70px; border-radius: 100px; object-fit: cover;
+            box-shadow: 0 2px 10px #8885; border: 3px solid #fff; margin-bottom: 12px;
+        }
+        .profile-box { text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="myForm" class="needs-validation my-4" novalidate autocomplete="off">
+            <div class="row">
+                <div class="col-12 text-center mb-2">
+                    <p class="h2 text-light">ระบบตรวจเช็คระบบน้ำ RO</p>
+                </div>
+                <div class="col-12 profile-box">
+                    <img id="profilePic" class="profile-img d-none" src="" alt="profile">
+                </div>
+            </div>
+            <div class="row justify-content-start g-3">
+                <div class="col-12 col-md-6">
+                    <label for="name"><i class="bi bi-person-circle"></i> ผู้ตรวจสอบ</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                    <div class="invalid-feedback">กรุณากรอกชื่อ-สกุล</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label for="leaveDate"><i class="bi bi-calendar-event"></i> วันที่</label>
+                    <input type="text" id="leaveDate" name="leaveDate" class="form-control" readonly required>
+                    <div class="invalid-feedback">กรุณากรอกวันที่</div>
+                </div>
+            </div>
+            <div class="row gx-3 gy-2 mb-3 mt-1">
+                <div class="col-md-4"><label for="orp"><i class="bi bi-droplet-half text-danger"></i> ORP</label><input type="number" step="0.01" id="orp" name="orp" class="form-control" required></div>
+                <div class="col-md-4"><label for="chlorine"><i class="bi bi-droplet-fill text-info"></i> Chlorine ในน้ำดิบ <small>{0.3-0.5 ppm}</small></label><input type="number" step="0.01" id="chlorine" name="chlorine" class="form-control" required></div>
+                <div class="col-md-4"><label for="softener_aquadur"><i class="bi bi-droplet"></i> Hardness (Softener Aquadur) <small>{&lt;17.1 ppm}</small></label><input type="number" step="0.01" id="softener_aquadur" name="softener_aquadur" class="form-control" required></div>
+                <div class="col-md-4"><label for="carbon1_chlorine"><i class="bi bi-droplet"></i> Chlorine หลัง Carbon 1 <small>{&lt;0.1 ppm}</small></label><input type="number" step="0.01" id="carbon1_chlorine" name="carbon1_chlorine" class="form-control" required></div>
+                <div class="col-md-3"><label for="carbon2_chlorine"><i class="bi bi-droplet"></i> Chlorine หลัง Carbon 2 <small>{&lt;0.1 ppm}</small></label><input type="number" step="1" id="carbon2_chlorine" name="carbon2_chlorine" class="form-control" required></div>
+                <div class="col-md-3"><label for="raw_conductivity"><i class="bi bi-activity"></i> RAW Conductiviry <small>{&lt;500 us/cm2}</small></label><input type="number" step="0.01" id="raw_conductivity" name="raw_conductivity" class="form-control" required></div>
+                <div class="col-md-3"><label for="permeate_flow"><i class="bi bi-water"></i> Permeate Flow <small>{18-35 LPM}</small></label><input type="number" step="1" id="permeate_flow" name="permeate_flow" class="form-control" required></div>
+                <div class="col-md-3"><label for="concentrate_flow"><i class="bi bi-water"></i> Concentrate Flow <small>{18-35 LPM}</small></label><input type="number" step="1" id="concentrate_flow" name="concentrate_flow" class="form-control" required></div>
+                <div class="col-md-3"><label for="ro_conductivity"><i class="bi bi-activity"></i> Conductiviry RO <small>{&lt;10 us/cm2}</small></label><input type="number" step="0.01" id="ro_conductivity" name="ro_conductivity" class="form-control" required></div>
+                <div class="col-md-3"><label for="salt_rejection"><i class="bi bi-percent"></i>Salt Rejection <small>{> 90%} (คำนวณอัตโนมัติ)</small></label><input type="number" step="0.01" id="salt_rejection" name="salt_rejection" class="form-control" readonly></div>
+                <div class="col-md-3"><label for="recovery"><i class="bi bi-percent"></i> Recovery <small>{45-55%} (คำนวณอัตโนมัติ)</small></label><input type="number" step="0.01" id="recovery" name="recovery" class="form-control" readonly></div>
+            </div>
+            <div class="row justify-content-start g-3">
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn three-d-btn w-100 fs-5">
+                        <i class="bi bi-save2"></i>&nbsp;บันทึกข้อมูล
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbxsr1nwnYPCZrzRZPwkDehN6S4jrdtnURDP3BKQX03G_jAjRQpGpOJXJEaBbUYkP_5i/exec';
+
+        $(document).ready(function() {
+            // Set today date
+            const today = new Date();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const yy = String(today.getFullYear()).slice(-2);
+            const todayStr = mm + '/' + dd + '/' + yy;
+            $("#leaveDate").val(todayStr);
+
+    function updateAutoCalc() {
+        let raw = parseFloat($('#raw_conductivity').val());
+        let ro = parseFloat($('#ro_conductivity').val());
+        if (!isNaN(raw) && raw > 0 && !isNaN(ro)) {
+            let saltRejection = ((raw - ro) / raw) * 100;
+            $('#salt_rejection').val(saltRejection.toFixed(2));
+        } else {
+            $('#salt_rejection').val('');
+        }
+        let permeate = parseFloat($('#permeate_flow').val());
+        let concentrate = parseFloat($('#concentrate_flow').val());
+        if (!isNaN(permeate) && !isNaN(concentrate) && (permeate + concentrate) > 0) {
+            let recovery = (permeate / (permeate + concentrate)) * 100;
+            $('#recovery').val(recovery.toFixed(2));
+        } else {
+            $('#recovery').val('');
+        }
+    }
+    $('#raw_conductivity, #ro_conductivity').on('input', updateAutoCalc);
+    $('#permeate_flow, #concentrate_flow').on('input', updateAutoCalc);
+            // LINE LIFF Auto profile
+            if(window.liff) {
+                liff.init({
+                    liffId: '2007068541-vw9nYxay',
+                    withLoginOnExternalBrowser: true
+                }).then(() => {
+                    liff.getProfile().then(function(profile){
+                        $("#profilePic").attr("src", profile.pictureUrl).removeClass("d-none");
+                        if (!$('#name').val()) $('#name').val(profile.displayName);
+                    });
+                });
+            }
+        });
+
+        // Bootstrap validation
+        (() => {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    event.preventDefault();
+                    if (!form.checkValidity()) {
+                        event.stopPropagation();
+                        form.classList.add('was-validated');
+                        $('#myForm').find(":invalid").first().focus();
+                    } else {
+                        submit();
+                    }
+                }, false);
+            });
+        })();
+
+        function submit() {
+            $.LoadingOverlay('show');
+            if (window.liff && liff.getProfile && liff.getDecodedIDToken) {
+                liff.init({
+                    liffId: '2007068541-vw9nYxay',
+                    withLoginOnExternalBrowser: true
+                }).then(() => {
+                    liff.getProfile().then(function(profile){
+                        const uid = liff.getDecodedIDToken().sub;
+                        const data = {
+                            opt: 'savedata',
+                            uid: uid,
+                            name: $('#name').val(),
+                            orp: parseFloat($('#orp').val()) || 0,
+                            chlorine: parseFloat($('#chlorine').val()) || 0,
+                            softener_aquadur: parseFloat($('#softener_aquadur').val()) || 0,
+                            carbon1_chlorine: parseFloat($('#carbon1_chlorine').val()) || 0,
+                            carbon2_chlorine: parseFloat($('#carbon2_chlorine').val()) || 0,
+                            raw_conductivity: parseFloat($('#raw_conductivity').val()) || 0,
+                            ro_conductivity: parseFloat($('#ro_conductivity').val()) || 0,
+                            salt_rejection: parseFloat($('#salt_rejection').val()) || 0,
+                            recovery: parseFloat($('#recovery').val()) || 0
+                        };
+                        $.ajax({
+                            method: "POST",
+                            url: scriptUrl,
+                            data: data,
+                            dataType: 'json',
+                            success: function (res) {
+                                $.LoadingOverlay('hide');
+                                if(res && res.status === "success") {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'บันทึกข้อมูลสำเร็จ',
+                                        allowOutsideClick: false,
+                                        confirmButtonText: 'ตกลง'
+                                    }).then(() => {
+                                        let flex = sendROFlex(profile, data);
+                                        liff.sendMessages([flex]).then(() => {
+                                            liff.closeWindow();
+                                        });
+                                    });
+                                }
+                                else {
+                                    return Swal.fire({
+                                        icon: 'error',
+                                        title: 'เกิดข้อผิดพลาด',
+                                        allowOutsideClick: false,
+                                        confirmButtonText: 'ตกลง'
+                                    });
+                                }
+                            },
+                            error: function (err) {
+                                $.LoadingOverlay('hide');
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'บันทึกข้อมูลไม่สำเร็จ',
+                                    allowOutsideClick: false,
+                                    confirmButtonText: 'ตกลง'
+                                });
+                            }
+                        });
+                    });
+                });
+            } else {
+                $.LoadingOverlay('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'บันทึกข้อมูลสำเร็จ',
+                    html: '<pre style="text-align:left;">' + JSON.stringify(data, null, 2) + '</pre>',
+                    confirmButtonText: 'ตกลง'
+                });
+            }
+        }
+
+        function sendROFlex(profile, data) {
+            let flex = {
+                type: 'flex',
+                altText: 'บันทึกข้อมูลตรวจสอบน้ำ RO',
+                contents: {
+                    type: "bubble",
+                    body: {
+                        type: "box",
+                        layout: "vertical",
+                        contents: [
+                            {
+                                type: "box",
+                                layout: "horizontal",
+                                contents: [
+                                    {
+                                        type: "box",
+                                        layout: "vertical",
+                                        contents: [
+                                            {
+                                                type: "image",
+                                                url: profile.pictureUrl,
+                                                aspectMode: "cover",
+                                                size: "full"
+                                            }
+                                        ],
+                                        cornerRadius: "100px",
+                                        width: "72px",
+                                        height: "72px"
+                                    },
+                                    {
+                                        type: "box",
+                                        layout: "vertical",
+                                        contents: [
+                                            {
+                                                type: "text",
+                                                contents: [
+                                                    {
+                                                        type: "span",
+                                                        text: " " + data.name,
+                                                        weight: "bold",
+                                                        color: "#000000"
+                                                    }
+                                                ],
+                                                size: "sm",
+                                                wrap: true
+                                            },
+                                            {
+                                                type: "box",
+                                                layout: "vertical",
+                                                contents: [
+                                                    {
+                                                        type: "text",
+                                                        text: "รายงานระบบน้ำ RO 💧🧪",
+                                                        size: "sm",
+                                                        color: "#006EBC",
+                                                        weight: "bold",
+                                                        action: {
+                                                            type: "uri",
+                                                            label: "รายงานระบบน้ำ RO 💧🧪",
+                                                            uri: "https://kidneybidi.my.canva.site/dashboard-kpi-ro"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ],
+                                spacing: "xl",
+                                paddingAll: "20px",
+                                backgroundColor: "#96CFCF"
+                            },
+                            {
+                                type: "box",
+                                layout: "vertical",
+                                contents: [
+                                    {
+                                        type: "text",
+                                        text: "📆 วันที่ : " + ($("#leaveDate").val() || ""),
+                                        size: "sm",
+                                        weight: "bold",
+                                        color: "#0B3F5A"
+                                    },
+                                    {
+                                        type: "separator",
+                                        margin: "md"
+                                    },
+                                    {
+                                        type: "box",
+                                        layout: "vertical",
+                                        margin: "md",
+                                        spacing: "sm",
+                                        contents: [
+                                            {
+                                                type: "text",
+                                                text: "🩸 ORP : " + data.orp ,
+                                                size: "sm"
+                                            },
+                                            {
+                                                type: "text",
+                                                text: "💧 Chlorine ในน้ำดิบ : " + data.chlorine ,
+                                                size: "sm"
+                                            },
+                                            {
+                                                type: "text",
+                                                text: "💧 Hardness : " + data.softener_aquadur + " ppm ",
+                                                size: "sm"
+                                            },
+                                            {
+                                                type: "text",
+                                                text: "Chlorine หลัง Carbon1 : " + data.carbon1_chlorine,
+                                                size: "sm"
+                                            },
+                                            {
+                                                type: "text",
+                                                text: "Chlorine หลัง Carbon2 : " + data.carbon2_chlorine,
+                                                size: "sm"
+                                            },
+                                            {
+                                                type: "text",
+                                                text: "🌊 RAW Conductivity : " + data.raw_conductivity,
+                                                size: "sm"
+                                            },
+                                            {
+                                                type: "text",
+                                                text: "📉RO Conductivity : " + data.ro_conductivity,
+                                                size: "sm"
+                                            },
+                                            {
+                                                type: "text",
+                                                text: " % Salt Rejection: " + data.salt_rejection + " %",
+                                                size: "sm"
+                                            },
+                                            {
+                                                type: "text",
+                                                text: " % Recovery: " + data.recovery + " %",
+                                                size: "sm"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                spacing: "xs",
+                                paddingAll: "14px"
+                            }
+                        ],
+                        paddingAll: "0px"
+                    },
+                    footer: {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {
+                                "type": "text",
+                                "text": "ตรวจสอบระบบน้ำ RO",
+                                "position": "relative",
+                                "weight": "bold",
+                                "align": "center",
+                                "action": {
+                                    "type": "uri",
+                                    "label": "action",
+                                    "uri": "https://liff.line.me/2007068541-vw9nYxay"
+                                }
+                            }
+                        ]
+                    },
+                    styles: {
+                        body: {
+                            backgroundColor: "#F5DCE0"
+                        }
+                    }
+                }
+            };
+            return flex;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+</body>
+</html>
